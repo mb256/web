@@ -16,18 +16,30 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from .env file (for local development)
+# In production, set these as actual environment variables
+env_file = BASE_DIR.parent / '.env'
+if env_file.exists():
+    with open(env_file) as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#') and '=' in line:
+                key, value = line.split('=', 1)
+                os.environ.setdefault(key, value)
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = 'django-insecure-_@@f9fx@m++8)e28)hu079_ty$9x$_h%#l!oea*(5k7stap6yp'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-LOCAL-DEVELOPMENT-KEY-CHANGE-IN-PRODUCTION')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
-DEBUG = os.getenv("DJANGO_DEBUG", "0") == "1"
+DEBUG = os.environ.get('DJANGO_DEBUG', '0') == '1'
 
-ALLOWED_HOSTS = ['mbrouk.pythonanywhere.com', 'localhost', '127.0.0.1']
+# Parse ALLOWED_HOSTS from environment
+allowed_hosts_str = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1')
+ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_str.split(',') if host.strip()]
 
 
 # Application definition
