@@ -1,0 +1,218 @@
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-primary: #121212;
+    --bg-secondary: #1e1e1e;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-tertiary: #999999;
+    --hover-color: #ffffff;
+    --first-section-spacing: 1rem;
+    --section-spacing: 3rem;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+}
+
+/* Header Styles */
+.header {
+    background-color: rgba(30, 30, 30, 0.95);
+    padding: 1.5rem 1rem;
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.nav-menu {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: #f5f5f5; /* Lighter text */
+    font-weight: 500;
+    transition: color 0.3s ease;
+    position: relative;
+}
+
+.nav-menu a:hover {
+    color: #fff;
+}
+
+.nav-menu a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--text-primary) 60%, transparent 100%);
+    transform: scaleX(0) translateX(-30%);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+    opacity: 0.8;
+    border-radius: 1px;
+}
+
+.nav-menu a:hover::after {
+    transform: scaleX(1) translateX(0);
+}
+
+#about {
+    scroll-margin-top: 100px; /* Adjust this value to match your header height */
+}
+
+#skills {
+    scroll-margin-top: 100px; /* Adjust this value to match your header height */
+}
+
+#portfolio {
+    scroll-margin-top: 100px; /* Adjust this value to match your header height */
+}
+
+.logo img {
+    height: 90px; /* Set the desired image height */
+    width: auto; /* Maintain aspect ratio */
+    object-fit: contain; /* Ensure the image fits within its container */
+    margin: -20px 0; /* Adjust negative margins to prevent header size increase */
+}
+
+/* Main Content Styles */
+.main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.hero-section {
+    text-align: center;
+    padding: var(--first-section-spacing) 0;
+    margin-bottom: var(--first-section-spacing);
+}
+
+.hero-section h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero-section p {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.hero-section div {
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#text-display {
+    height: 40px;
+    /* Fixed height */
+    overflow: hidden;
+    /* Prevent overflow */
+    transition: opacity 0.3s ease;
+    /* Smooth transition */
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.about-section,
+.skills-section,
+.portfolio-section,
+.contact-section {
+    margin-bottom: var(--section-spacing);
+    padding: 2rem;
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+section h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+/* Footer Styles */
+.footer {
+    background-color: rgba(30, 30, 30, 0.95);
+    padding: 1.5rem 1rem;
+    text-align: center;
+    color: var(--text-secondary);
+    position: relative;
+}
+
+/* Portfolio section links styled like nav-menu, but underline always visible */
+.portfolio-section a {
+    text-decoration: none;
+    color: #f5f5f5;
+    font-weight: 500;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.portfolio-section a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--text-primary) 60%, transparent 100%);
+    opacity: 0.8;
+    border-radius: 1px;
+    transform: scaleX(1);
+    transition: background 0.3s, color 0.3s;
+}
+
+.portfolio-section a:hover {
+    color: #fff;
+}
+
+.portfolio-section a:hover::after {
+    background: linear-gradient(90deg, #fff 60%, transparent 100%);
+}
+
+.portfolio-section {
+    color: var(--text-secondary);
+}
+
+.portfolio-section h5 {
+    color: var(--text-primary);
+}
