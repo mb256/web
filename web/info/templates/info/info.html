@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>mbrouk - Personal Landing Page</title>
 
-    <!-- <link rel="stylesheet" link href="/static_web/css/styles-dark.css"> -->
     <link rel="stylesheet" type="text/css" href="{% static 'info/styles-dark.css' %}">
 
     <style>
@@ -42,7 +42,7 @@
     <header class="header">
         <nav class="nav-container">
             <div class="logo">
-                <img src="/static_web/img/logo-no-bg.png" alt="Info Page Logo" style="height: 75px;">
+                <img src="{% static 'info/img/logo-no-bg.png' %}" alt="Info Page Logo" style="height: 75px;">
             </div>
             <ul class="nav-menu">
                 <li><a href="#about">About</a></li>
@@ -57,7 +57,7 @@
         <!-- Hero Section -->
         <section class="hero-section">
             <div id="text-display"></div>
-            <script src="/static_web/js/text-animation.js"></script>
+            <script src="{% static 'info/js/text-animation.js' %}"></script>
             <!-- <h1>Personal Portfolio</h1> -->
             <p>
                 15+ years of experience in Software and Firmware development.<br>
@@ -103,8 +103,8 @@
                 </div>
                 <!-- Second Column -->
                 <div style="flex: 1; min-width: 100px; display: flex; justify-content: space-around; gap: 5px;">
-                    <a href="/static_web/img/better_daily/better_daily_2.png" target="_blank">
-                        <img src="/static_web/img/better_daily/better_daily_2.png" alt="Main Project Image" style="max-width: 240px; height: auto;">
+                    <a href="{% static 'info/img/better_daily/better_daily_2.png' %}" target="_blank">
+                        <img src="{% static 'info/img/better_daily/better_daily_2.png' %}" alt="Main Project Image" style="max-width: 240px; height: auto;">
                     </a>
                     <!--
                     <img src="img/better_daily/better_daily_2.png" alt="Category Image" style="max-width: 240px; height: auto;">
@@ -130,11 +130,11 @@
                 </div>
                 <!-- Second Column -->
                 <div style="flex: 1; min-width: 100px; display: flex; justify-content: space-around; gap: 5px;">
-                    <a href="/static_web/img/vtip_list/vtip_list_main.jpg" target="_blank">
-                        <img src="/static_web/img/vtip_list/vtip_list_main.jpg" alt="Main Project Image" style="max-width: 120px; height: auto;">
+                    <a href="{% static 'info/img/vtip_list/vtip_list_main.jpg' %}" target="_blank">
+                        <img src="{% static 'info/img/vtip_list/vtip_list_main.jpg' %}" alt="Main Project Image" style="max-width: 120px; height: auto;">
                     </a>
-                    <a href="/static_web/img/vtip_list/vtip_list_cat.jpg" target="_blank">
-                        <img src="/static_web/img/vtip_list/vtip_list_cat.jpg" alt="Category Image" style="max-width: 120px; height: auto;">
+                    <a href="{% static 'info/img/vtip_list/vtip_list_cat.jpg' %}" target="_blank">
+                        <img src="{% static 'info/img/vtip_list/vtip_list_cat.jpg' %}" alt="Category Image" style="max-width: 120px; height: auto;">
                     </a>
                     <!-- <img src="img/vtip_list_extra.jpg" alt="Extra Image" style="max-width: 30%; height: auto;"> -->
                 </div>
@@ -159,11 +159,11 @@
                 </div>
                 <!-- Second Column -->
                 <div style="flex: 1; min-width: 100px; display: flex; justify-content: space-around; gap: 5px;">
-                    <a href="/static_web/img/galaxy_run/game_1.png" target="_blank">
-                        <img src="/static_web/img/galaxy_run/game_1.png" alt="Main Project Image" style="max-width: 120px; height: auto;">
+                    <a href="{% static 'info/img/galaxy_run/game_1.png' %}" target="_blank">
+                        <img src="{% static 'info/img/galaxy_run/game_1.png' %}" alt="Main Project Image" style="max-width: 120px; height: auto;">
                     </a>
-                    <a href="/static_web/img/galaxy_run/game_2.png" target="_blank">
-                        <img src="/static_web/img/galaxy_run/game_2.png" alt="Category Image" style="max-width: 120px; height: auto;">
+                    <a href="{% static 'info/img/galaxy_run/game_2.png' %}" target="_blank">
+                        <img src="{% static 'info/img/galaxy_run/game_2.png' %}" alt="Category Image" style="max-width: 120px; height: auto;">
                     </a>
                     <!-- <img src="img/vtip_list_extra.jpg" alt="Extra Image" style="max-width: 30%; height: auto;"> -->
                 </div>
