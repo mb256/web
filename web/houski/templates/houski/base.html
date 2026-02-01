@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HOUSKI - Climbing Club Pilsen{% endblock %}</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'houski/css/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'houski/css/layout.css' %}">
+    <link rel="stylesheet" href="{% static 'houski/css/components.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <div class="container header-container">
+            <a href="{% url 'houski:home' %}" class="site-logo">HOUSKI</a>
+            
+            <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+            
+            <nav>
+                <ul>
+                    <li><a href="{% url 'houski:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+                    <li><a href="#news">News</a></li>
+                    <li><a href="#articles">Articles</a></li>
+                    <li><a href="#events">Events</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'admin:logout' %}?next={% url 'houski:home' %}">Logout ({{ user.username }})</a></li>
+                    {% else %}
+                        <li><a href="{% url 'admin:login' %}?next={{ request.path }}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="main-content">
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="message message-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block content %}
+            {% endblock %}
+        </div>
+
+        <aside class="sidebar">
+            {% block sidebar %}
+                {% if picture_of_week %}
+                <div class="sidebar-widget">
+                    <h3>Picture of the Week</h3>
+                    <img src="{{ picture_of_week.image.url }}" alt="{{ picture_of_week.caption }}" class="potw-image">
+                    <p class="potw-caption">{{ picture_of_week.caption }}</p>
+                    {% if picture_of_week.photographer %}
+                        <p class="potw-photographer">📷 {{ picture_of_week.photographer }}</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+            {% endblock %}
+        </aside>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-content">
+                <h3>HOUSKI</h3>
+                <p class="footer-motto">Rock Climbing • Mountaineering • Alpinism • Ski Alpinism</p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; {% now "Y" %} HOUSKI Climbing Club Pilsen. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{% static 'houski/js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

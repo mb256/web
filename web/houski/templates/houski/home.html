@@ -1,0 +1,100 @@
+{% extends 'houski/base.html' %}
+
+{% block title %}{{ club_info.title }} - Home{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>{{ club_info.title }}</h1>
+    <p>{{ club_info.location }}</p>
+</div>
+
+<section class="info-section">
+    <h2>About Us</h2>
+    <div class="card">
+        {{ club_info.description|linebreaks }}
+    </div>
+</section>
+
+{% if club_info.history %}
+<section class="info-section">
+    <h2>Our History</h2>
+    <div class="card">
+        {{ club_info.history|linebreaks }}
+    </div>
+</section>
+{% endif %}
+
+<section class="info-section">
+    <h2>Club Information</h2>
+    <div class="info-grid">
+        <div class="info-item">
+            <div class="info-label">Founded</div>
+            <div class="info-value">{{ club_info.founded_year }}</div>
+        </div>
+        
+        <div class="info-item">
+            <div class="info-label">Location</div>
+            <div class="info-value">{{ club_info.location }}</div>
+        </div>
+        
+        {% if club_info.email %}
+        <div class="info-item">
+            <div class="info-label">Email</div>
+            <div class="info-value">
+                <a href="mailto:{{ club_info.email }}">{{ club_info.email }}</a>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if club_info.phone %}
+        <div class="info-item">
+            <div class="info-label">Phone</div>
+            <div class="info-value">{{ club_info.phone }}</div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="info-section">
+    <h2>Our Activities</h2>
+    <div class="card">
+        <h3>🧗 Rock Climbing</h3>
+        <p>Sport and traditional climbing on local and international crags.</p>
+        
+        <h3>⛰️ Mountaineering</h3>
+        <p>Alpine expeditions and high-altitude climbing adventures.</p>
+        
+        <h3>🏔️ Alpinism</h3>
+        <p>Technical alpine climbing in the Czech Republic and abroad.</p>
+        
+        <h3>⛷️ Ski Alpinism</h3>
+        <p>Winter mountaineering combining skiing and climbing.</p>
+        
+        <h3>🏕️ Outdoor Activities</h3>
+        <p>Hiking, camping, and other outdoor adventures throughout the year.</p>
+    </div>
+</section>
+
+{% if user.is_authenticated %}
+<section class="info-section">
+    <h2>Get Involved</h2>
+    <div class="card">
+        <p>Welcome, {{ user.username }}! Check out our latest news and upcoming events.</p>
+        <p>
+            <a href="#news" class="btn">View News Board</a>
+            <a href="#events" class="btn btn-secondary">View Events</a>
+        </p>
+    </div>
+</section>
+{% else %}
+<section class="info-section">
+    <h2>Join Us</h2>
+    <div class="card">
+        <p>Interested in joining our climbing community? Members can access exclusive content, participate in club events, and share their climbing experiences.</p>
+        <p>
+            <a href="{% url 'admin:login' %}?next={% url 'houski:home' %}" class="btn">Member Login</a>
+        </p>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
