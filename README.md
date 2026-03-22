@@ -21,6 +21,20 @@ poetry install
 
 ## Running locally
 
+### Environment variables
+
+| Variable | Description | Default |
+|---|---|---|
+| `DJANGO_DEBUG` | Enable Django debug mode | `0` (off) |
+
+To enable debug mode locally:
+
+```bash
+export DJANGO_DEBUG=1
+```
+
+### Start the development server
+
 Make sure the virtual environment is activated, then start the Django development server:
 
 ```bash
