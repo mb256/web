@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poslední přelezy</title>
+    <link rel="stylesheet" href="{% static 'info/styles-dark.css' %}">
+    <style>
+        /* Responsive portfolio layout */
+        .portfolio-flex {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        @media (max-width: 700px) {
+            .portfolio-flex {
+                flex-direction: column;
+            }
+
+            .portfolio-flex>div {
+                min-width: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            .portfolio-flex img {
+                max-width: 100% !important;
+                height: auto !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">
+                <img src="{% static 'info/img/logo-no-bg.png' %}" alt="Info Page Logo" style="height: 75px;">
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#footer">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block templ_main_content %}
+            <!-- Hero Section -->
+            <!-- About Section -->
+            <!-- Portfolio Section -->
+            <!-- Contact Section -->
+        {% endblock %}
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div id="footer" class="footer-content">
+            <div class="footer-info">
+                <p>&copy; 2025 mb256. All rights reserved. Contact: <a href="mailto:mb256@seznam.cz">mb256@seznam.cz</a></p>
+            </div>
+            <div class="footer-social">
+                <!-- Add your social media links here -->
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

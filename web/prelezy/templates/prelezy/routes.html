@@ -1,0 +1,241 @@
+{% extends 'prelezy/base_routes.html' %}
+
+{% block templ_main_content %}
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <h2>Poslední Přelezy</h2>
+</section>
+
+<!-- Climbers Routes Section -->
+<section class="routes-section">
+    {% for climber_data in climbers %}
+    <div class="climber-container">
+        <h2 class="climber-name">{{ climber_data.name }}</h2>
+        
+        {% if climber_data.error %}
+        <div class="error-message">
+            <p>{{ climber_data.error }}</p>
+        </div>
+        {% elif climber_data.routes %}
+        <div class="table-container">
+            <table class="routes-table">
+                <thead>
+                    <tr>
+                        <th>Cesta</th>
+                        <th>Sektor</th>
+                        <th>Styl</th>
+                        <th>Obtížnost</th>
+                        <th>Datum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for route in climber_data.routes %}
+                    <tr>
+                        <td data-label="Nazev">{{ route.name }}</td>
+                        <td data-label="Sektor">{{ route.sector }}</td>
+                        <td data-label="Styl">{{ route.style }}</td>
+                        <td data-label="Obtížnost">{{ route.difficulty }}</td>
+                        <td data-label="Datum">{{ route.date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="no-routes">
+            <p>Žádné přelezy k zobrazení</p>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</section>
+
+<style>
+    .routes-section {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .climber-container {
+        margin-bottom: 3rem;
+        background-color: var(--bg-secondary);
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .climber-name {
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 0.5rem;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .routes-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .routes-table thead {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .routes-table th {
+        padding: 1rem;
+        text-align: left;
+        color: var(--text-primary);
+        font-weight: 600;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .routes-table td {
+        padding: 0.875rem 1rem;
+        color: var(--text-secondary);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .routes-table tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .routes-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .error-message {
+        background-color: rgba(220, 53, 69, 0.2);
+        border-left: 4px solid #dc3545;
+        padding: 1rem;
+        border-radius: 4px;
+    }
+
+    .error-message p {
+        color: #ff6b6b;
+        margin: 0;
+    }
+
+    .no-routes {
+        background-color: rgba(255, 193, 7, 0.1);
+        border-left: 4px solid #ffc107;
+        padding: 1rem;
+        border-radius: 4px;
+    }
+
+    .no-routes p {
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    /* Mobile responsive styles */
+    @media screen and (max-width: 768px) {
+        .routes-section {
+            padding: 1rem 0.5rem;
+        }
+
+        .climber-container {
+            padding: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .climber-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.4rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .routes-table {
+            font-size: 0.75rem;
+            min-width: 100%;
+        }
+
+        .routes-table th {
+            padding: 0.5rem 0.3rem;
+            font-size: 0.7rem;
+            white-space: nowrap;
+        }
+
+        .routes-table td {
+            padding: 0.4rem 0.3rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
+        }
+
+        /* Make specific columns narrower on mobile */
+        .routes-table td:nth-child(3), /* Styl */
+        .routes-table th:nth-child(3) {
+            max-width: 50px;
+        }
+
+        .routes-table td:nth-child(4), /* Obtížnost */
+        .routes-table th:nth-child(4) {
+            max-width: 60px;
+        }
+
+        .routes-table td:nth-child(5), /* Datum */
+        .routes-table th:nth-child(5) {
+            max-width: 80px;
+        }
+
+        .routes-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        .climber-name {
+            font-size: 1.2rem;
+        }
+
+        .routes-table {
+            font-size: 0.7rem;
+        }
+
+        .routes-table th {
+            padding: 0.4rem 0.25rem;
+            font-size: 0.65rem;
+        }
+
+        .routes-table td {
+            padding: 0.35rem 0.25rem;
+            font-size: 0.7rem;
+            max-width: 120px;
+        }
+
+        /* Adjust column widths for very small screens */
+        .routes-table td:nth-child(3), /* Styl */
+        .routes-table th:nth-child(3) {
+            max-width: 40px;
+        }
+
+        .routes-table td:nth-child(4), /* Obtížnost */
+        .routes-table th:nth-child(4) {
+            max-width: 50px;
+        }
+
+        .routes-table td:nth-child(5), /* Datum */
+        .routes-table th:nth-child(5) {
+            max-width: 70px;
+            font-size: 0.65rem;
+        }
+    }
+</style>
+
+{% endblock %}
