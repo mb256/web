@@ -7,49 +7,97 @@
     <h2>Poslední Přelezy</h2>
 </section>
 
-<!-- Climbers Routes Section -->
+<!-- Climbers Rankings Section -->
 <section class="routes-section">
     {% for climber_data in climbers %}
     <div class="climber-container">
-        <h2 class="climber-name">{{ climber_data.name }}</h2>
-        
-        {% if climber_data.error %}
-        <div class="error-message">
-            <p>{{ climber_data.error }}</p>
+        <!-- Climber Summary Row -->
+        <div class="climber-summary" data-climber-id="climber-{{ forloop.counter }}">
+            <div class="climber-info">
+                <div class="climber-name-block">
+                    <h3 class="climber-name">{{ climber_data.name }}</h3>
+                    {% if climber_data.last_climb_date %}
+                    <p class="last-climb-date">Poslední prelez: {{ climber_data.last_climb_date }}</p>
+                    {% endif %}
+                </div>
+                <div class="climber-points">
+                    <span class="points-value">{{ climber_data.total_points }}</span>
+                    <span class="points-label">bodů</span>
+                </div>
+            </div>
+            <button class="detail-toggle" data-toggle="climber-{{ forloop.counter }}">
+                <span class="toggle-text">detail</span>
+                <span class="toggle-icon">▼</span>
+            </button>
         </div>
-        {% elif climber_data.routes %}
-        <div class="table-container">
-            <table class="routes-table">
-                <thead>
-                    <tr>
-                        <th>Cesta</th>
-                        <th>Sektor</th>
-                        <th>Styl</th>
-                        <th>Obtížnost</th>
-                        <th>Datum</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for route in climber_data.routes %}
-                    <tr>
-                        <td data-label="Nazev">{{ route.name }}</td>
-                        <td data-label="Sektor">{{ route.sector }}</td>
-                        <td data-label="Styl">{{ route.style }}</td>
-                        <td data-label="Obtížnost">{{ route.difficulty }}</td>
-                        <td data-label="Datum">{{ route.date }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+
+        <!-- Expandable Details Section -->
+        <div class="climber-details" id="climber-{{ forloop.counter }}">
+            {% if climber_data.error %}
+            <div class="error-message">
+                <p>{{ climber_data.error }}</p>
+            </div>
+            {% elif climber_data.routes %}
+            <div class="table-container">
+                <table class="routes-table">
+                    <thead>
+                        <tr>
+                            <th>Cesta</th>
+                            <th>Sektor</th>
+                            <th>Styl</th>
+                            <th>Obtížnost</th>
+                            <th>Datum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for route in climber_data.routes %}
+                        <tr>
+                            <td data-label="Cesta">{{ route.name }}</td>
+                            <td data-label="Sektor">{{ route.sector }}</td>
+                            <td data-label="Styl">{{ route.style }}</td>
+                            <td data-label="Obtížnost">{{ route.difficulty }}</td>
+                            <td data-label="Datum">{{ route.date }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-routes">
+                <p>Žádné přelezy k zobrazení</p>
+            </div>
+            {% endif %}
         </div>
-        {% else %}
-        <div class="no-routes">
-            <p>Žádné přelezy k zobrazení</p>
-        </div>
-        {% endif %}
     </div>
     {% endfor %}
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleButtons = document.querySelectorAll('.detail-toggle');
+    
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-toggle');
+            const targetDetails = document.getElementById(targetId);
+            const climberContainer = this.closest('.climber-container');
+            
+            if (targetDetails) {
+                climberContainer.classList.toggle('expanded');
+                targetDetails.classList.toggle('show');
+                
+                // Rotate the toggle icon
+                const icon = this.querySelector('.toggle-icon');
+                if (icon) {
+                    icon.style.transform = climberContainer.classList.contains('expanded') 
+                        ? 'rotate(180deg)' 
+                        : 'rotate(0deg)';
+                }
+            }
+        });
+    });
+});
+</script>
 
 <style>
     .routes-section {
@@ -59,19 +107,119 @@
     }
 
     .climber-container {
-        margin-bottom: 3rem;
+        margin-bottom: 1.5rem;
         background-color: var(--bg-secondary);
         border-radius: 8px;
-        padding: 1.5rem;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+    }
+
+    /* Climber Summary Row */
+    .climber-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        background-color: var(--bg-secondary);
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .climber-summary:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .climber-info {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        flex: 1;
+    }
+
+    .climber-name-block {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
     }
 
     .climber-name {
         color: var(--text-primary);
-        margin-bottom: 1.5rem;
-        font-size: 1.8rem;
-        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        padding-bottom: 0.5rem;
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .last-climb-date {
+        color: var(--text-secondary);
+        margin: 0;
+        font-size: 0.85rem;
+        font-style: italic;
+    }
+
+    .climber-points {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.05);
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        border-left: 3px solid var(--text-primary);
+    }
+
+    .points-value {
+        color: var(--text-primary);
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .points-label {
+        color: var(--text-secondary);
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Detail Toggle Button */
+    .detail-toggle {
+        padding: 0.5rem 1rem;
+        background: none;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: var(--text-primary);
+        cursor: pointer;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s ease;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-left: 1rem;
+    }
+
+    .detail-toggle:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .toggle-icon {
+        display: inline-block;
+        transition: transform 0.3s ease;
+        font-size: 0.75rem;
+    }
+
+    /* Expandable Details Section */
+    .climber-details {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, opacity 0.3s ease;
+        opacity: 0;
+    }
+
+    .climber-details.show {
+        max-height: 2000px;
+        opacity: 1;
+        padding: 1.5rem;
     }
 
     .table-container {
@@ -143,14 +291,39 @@
         }
 
         .climber-container {
-            padding: 0.75rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .climber-summary {
+            padding: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .climber-info {
+            gap: 1rem;
+            flex: 1 100%;
         }
 
         .climber-name {
-            font-size: 1.3rem;
-            margin-bottom: 0.75rem;
-            padding-bottom: 0.4rem;
+            font-size: 1.2rem;
+        }
+
+        .climber-points {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .points-value {
+            font-size: 1.4rem;
+        }
+
+        .detail-toggle {
+            margin-left: 0;
+            margin-top: 0.5rem;
+        }
+
+        .climber-details.show {
+            padding: 1rem;
         }
 
         .table-container {
@@ -201,7 +374,28 @@
 
     @media screen and (max-width: 480px) {
         .climber-name {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+        }
+
+        .last-climb-date {
+            font-size: 0.75rem;
+        }
+
+        .climber-points {
+            padding: 0.4rem 0.8rem;
+        }
+
+        .points-value {
+            font-size: 1.3rem;
+        }
+
+        .points-label {
+            font-size: 0.6rem;
+        }
+
+        .detail-toggle {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
         }
 
         .routes-table {
