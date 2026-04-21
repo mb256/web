@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 import requests
 from bs4 import BeautifulSoup
 import time
@@ -267,46 +268,48 @@ CLIMBERS_DATA_TOP10 = [
 
 
 def prelezy(request):
-    """Django view that displays climbers sorted by total climbing points."""
+    """Django view — renders the page shell immediately; data is loaded async via prelezy_data."""
+    active_view = request.GET.get('view', 'last')
+    if active_view not in ('last', 'top10'):
+        active_view = 'last'
+    return render(request, 'prelezy/routes.html', {'active_view': active_view})
+
+
+def prelezy_data(request):
+    """JSON endpoint that fetches and returns all climber data."""
     active_view = request.GET.get('view', 'last')
     if active_view == 'top10':
-        climbers_data = CLIMBERS_DATA_TOP10
+        climbers_source = CLIMBERS_DATA_TOP10
         use_date_filter = True
     else:
-        active_view = 'last'
-        climbers_data = CLIMBERS_DATA_LAST
+        climbers_source = CLIMBERS_DATA_LAST
         use_date_filter = False
 
     climbers = []
-    for climber in climbers_data:
+    for climber in climbers_source:
         result = fetch_climber_routes(climber['url'], date_filter=use_date_filter)
-        
+
         if result is None:
             climber_info = {
                 'name': climber['name'],
                 'routes': [],
                 'total_points': 0,
                 'last_climb_date': None,
-                'error': 'Nepodařilo se načíst data po 3 pokusech'
+                'error': 'Nepodařilo se načíst data po 3 pokusech',
             }
         else:
             routes = result['routes']
             total_points = result['total_points']
-            
-            # Get the last climb date (most recent route, which is first in the list)
             last_climb_date = routes[0]['date'] if routes else None
-            
             climber_info = {
                 'name': climber['name'],
                 'routes': routes,
                 'total_points': total_points,
                 'last_climb_date': last_climb_date,
-                'error': None
+                'error': None,
             }
-        
+
         climbers.append(climber_info)
 
-    # Sort climbers by total_points descending (highest first)
     climbers.sort(key=lambda x: x['total_points'], reverse=True)
-
-    return render(request, 'prelezy/routes.html', {'climbers': climbers, 'active_view': active_view})
+    return JsonResponse({'climbers': climbers})

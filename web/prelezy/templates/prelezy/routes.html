@@ -11,99 +11,162 @@
     </div>
 </section>
 
-<!-- Climbers Rankings Section -->
-<section class="routes-section">
-    {% for climber_data in climbers %}
-    <div class="climber-container">
-        <!-- Climber Summary Row -->
-        <div class="climber-summary" data-climber-id="climber-{{ forloop.counter }}">
-            <div class="climber-info">
-                <div class="climber-name-block">
-                    <h3 class="climber-name">{{ climber_data.name }}</h3>
-                    {% if climber_data.last_climb_date %}
-                    <p class="last-climb-date">Poslední prelez: {{ climber_data.last_climb_date }}</p>
-                    {% endif %}
-                </div>
-                <div class="climber-points">
-                    <span class="points-value">{{ climber_data.total_points }}</span>
-                    <span class="points-label">bodů</span>
-                </div>
-            </div>
-            <button class="detail-toggle" data-toggle="climber-{{ forloop.counter }}">
-                <span class="toggle-text">detail</span>
-                <span class="toggle-icon">▼</span>
-            </button>
-        </div>
+<!-- Loading Overlay -->
+<div id="loading-overlay">
+    <div class="loader-ring"></div>
+    <p id="loader-text">Stahuji data</p>
+</div>
 
-        <!-- Expandable Details Section -->
-        <div class="climber-details" id="climber-{{ forloop.counter }}">
-            {% if climber_data.error %}
-            <div class="error-message">
-                <p>{{ climber_data.error }}</p>
-            </div>
-            {% elif climber_data.routes %}
-            <div class="table-container">
-                <table class="routes-table">
-                    <thead>
-                        <tr>
-                            <th>Cesta</th>
-                            <th>Sektor</th>
-                            <th>Styl</th>
-                            <th>Obtížnost</th>
-                            <th>Datum</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for route in climber_data.routes %}
-                        <tr>
-                            <td data-label="Cesta">{{ route.name }}</td>
-                            <td data-label="Sektor">{{ route.sector }}</td>
-                            <td data-label="Styl">{{ route.style }}</td>
-                            <td data-label="Obtížnost">{{ route.difficulty }}</td>
-                            <td data-label="Datum">{{ route.date }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% else %}
-            <div class="no-routes">
-                <p>Žádné přelezy k zobrazení</p>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-    {% endfor %}
-</section>
+<!-- Climbers Rankings Section — populated by JS -->
+<section class="routes-section" id="climbers-section" style="display:none"></section>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const toggleButtons = document.querySelectorAll('.detail-toggle');
-    
-    toggleButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const targetId = this.getAttribute('data-toggle');
-            const targetDetails = document.getElementById(targetId);
-            const climberContainer = this.closest('.climber-container');
-            
-            if (targetDetails) {
-                climberContainer.classList.toggle('expanded');
-                targetDetails.classList.toggle('show');
-                
-                // Rotate the toggle icon
-                const icon = this.querySelector('.toggle-icon');
-                if (icon) {
-                    icon.style.transform = climberContainer.classList.contains('expanded') 
-                        ? 'rotate(180deg)' 
-                        : 'rotate(0deg)';
-                }
-            }
+(function () {
+    const messages = [
+        'Stahuji data',
+        'Vydrž',
+        'Vydrž prďka, vydrž',
+        'Už to bude',
+        'Skoro tam',
+        'Poslední cesta',
+        'No dobře tak ještě jedna',
+        'A ještě kousek',
+    ];
+    let msgIndex = 0;
+    const loaderText = document.getElementById('loader-text');
+
+    const textInterval = setInterval(() => {
+        msgIndex = (msgIndex + 1) % messages.length;
+        loaderText.style.opacity = '0';
+        setTimeout(() => {
+            loaderText.textContent = messages[msgIndex];
+            loaderText.style.opacity = '1';
+        }, 300);
+    }, 2200);
+
+    const activeView = new URLSearchParams(window.location.search).get('view') || 'last';
+
+    fetch(`/prelezy/data/?view=${activeView}`)
+        .then(r => r.json())
+        .then(data => {
+            clearInterval(textInterval);
+            renderClimbers(data.climbers);
+            document.getElementById('loading-overlay').style.display = 'none';
+            const section = document.getElementById('climbers-section');
+            section.style.display = '';
+            attachToggleListeners();
+        })
+        .catch(() => {
+            clearInterval(textInterval);
+            loaderText.textContent = 'Chyba při načítání dat';
         });
-    });
-});
+
+    function renderClimbers(climbers) {
+        const section = document.getElementById('climbers-section');
+        section.innerHTML = climbers.map((c, i) => {
+            const id = `climber-${i + 1}`;
+            const lastDate = c.last_climb_date
+                ? `<p class="last-climb-date">Poslední prelez: ${c.last_climb_date}</p>` : '';
+            let detailContent;
+            if (c.error) {
+                detailContent = `<div class="error-message"><p>${c.error}</p></div>`;
+            } else if (c.routes && c.routes.length) {
+                const rows = c.routes.map(r => `
+                    <tr>
+                        <td data-label="Cesta">${r.name}</td>
+                        <td data-label="Sektor">${r.sector}</td>
+                        <td data-label="Styl">${r.style}</td>
+                        <td data-label="Obtížnost">${r.difficulty}</td>
+                        <td data-label="Datum">${r.date}</td>
+                    </tr>`).join('');
+                detailContent = `
+                    <div class="table-container">
+                        <table class="routes-table">
+                            <thead><tr>
+                                <th>Cesta</th><th>Sektor</th><th>Styl</th><th>Obtížnost</th><th>Datum</th>
+                            </tr></thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>`;
+            } else {
+                detailContent = `<div class="no-routes"><p>Žádné přelezy k zobrazení</p></div>`;
+            }
+            return `
+            <div class="climber-container">
+                <div class="climber-summary" data-climber-id="${id}">
+                    <div class="climber-info">
+                        <div class="climber-name-block">
+                            <h3 class="climber-name">${c.name}</h3>
+                            ${lastDate}
+                        </div>
+                        <div class="climber-points">
+                            <span class="points-value">${c.total_points}</span>
+                            <span class="points-label">bodů</span>
+                        </div>
+                    </div>
+                    <button class="detail-toggle" data-toggle="${id}">
+                        <span class="toggle-text">detail</span>
+                        <span class="toggle-icon">▼</span>
+                    </button>
+                </div>
+                <div class="climber-details" id="${id}">${detailContent}</div>
+            </div>`;
+        }).join('');
+    }
+
+    function attachToggleListeners() {
+        document.querySelectorAll('.detail-toggle').forEach(button => {
+            button.addEventListener('click', function () {
+                const targetId = this.getAttribute('data-toggle');
+                const targetDetails = document.getElementById(targetId);
+                const container = this.closest('.climber-container');
+                if (targetDetails) {
+                    container.classList.toggle('expanded');
+                    targetDetails.classList.toggle('show');
+                    const icon = this.querySelector('.toggle-icon');
+                    if (icon) {
+                        icon.style.transform = container.classList.contains('expanded')
+                            ? 'rotate(180deg)' : 'rotate(0deg)';
+                    }
+                }
+            });
+        });
+    }
+})();
 </script>
 
 <style>
+    /* Loading overlay */
+    #loading-overlay {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 5rem 1rem;
+        gap: 1.5rem;
+    }
+
+    .loader-ring {
+        width: 64px;
+        height: 64px;
+        border: 5px solid rgba(255, 255, 255, 0.1);
+        border-top-color: var(--text-primary);
+        border-radius: 50%;
+        animation: spin 0.9s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    #loader-text {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        font-style: italic;
+        transition: opacity 0.3s ease;
+        margin: 0;
+    }
+
     /* View switch toggle */
     .view-switch {
         display: flex;
